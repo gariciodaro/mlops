@@ -9,10 +9,10 @@ from omegaconf import DictConfig, OmegaConf
 # This automatically reads in the configuration
 @hydra.main(config_name="config")
 def go(config: DictConfig):
-
     # Setup the wandb experiment. All runs will be grouped under this name
     os.environ["WANDB_PROJECT"] = config["main"]["project_name"]
     os.environ["WANDB_RUN_GROUP"] = config["main"]["experiment_name"]
+    print(config["mlflow_log_model"])
 
     # You can get the path at the root of the MLflow project with this:
     root_path = hydra.utils.get_original_cwd()
@@ -29,8 +29,10 @@ def go(config: DictConfig):
         parameters={
             "train_data": config["data"]["train_data"],
             "model_config": model_config,
-            "export_model_artifact": config["mlflow_log_model"]["export_model_artifact"],
-            "name_model_artifact": config["mlflow_log_model"]["name_model_artifact"]
+            "export_model_artifact": config["mlflow_log_model"][
+                "export_model_artifact"
+            ],
+            "name_model_artifact": config["mlflow_log_model"]["name_model_artifact"],
         },
     )
 

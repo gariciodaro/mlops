@@ -9,7 +9,7 @@ entry_points:
         type: str
         default: ''
     command: >-
-      python main.py {hydra_options} 
+      python main.py $(echo {hydra_options})
 
 
 Comment: >

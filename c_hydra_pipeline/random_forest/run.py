@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import wandb
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.impute import SimpleImputer
-import mlflow.sklearn
+import mlflow
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
@@ -25,11 +25,11 @@ logger = logging.getLogger()
 
 
 def go(args):
-
     run = wandb.init(job_type="train")
-    logger.info(f"checking  name of artifact {args.name_model_artifact}")
 
+    logger.info(f"checking  name of artifact {args.name_model_artifact}")
     logger.info("Downloading and reading train artifact")
+
     train_data_path = run.use_artifact(args.train_data).file()
     df = pd.read_csv(train_data_path, low_memory=False)
 
@@ -55,13 +55,12 @@ def go(args):
     pred_proba = pipe.predict_proba(X_val)
 
     logger.info("Scoring")
-    score = roc_auc_score(
-        y_val, pred_proba, average="macro", multi_class="ovo"
-    )
+    score = roc_auc_score(y_val, pred_proba, average="macro", multi_class="ovo")
 
     run.summary["AUC"] = score
 
     # Export if required
+    logger.info(f"args.export_model_artifact {args.export_model_artifact}")
     if args.export_model_artifact is True:
         logger.info(f"Exporting model, name: {args.name_model_artifact}")
         export_model(run, pipe, X_val, pred, args.name_model_artifact)
@@ -88,37 +87,32 @@ def go(args):
 
     fig_feat_imp.tight_layout()
 
-    run.log(
-        {
-            "feature_importance": wandb.Image(fig_feat_imp)
-        }
-    )
+    run.log({"feature_importance": wandb.Image(fig_feat_imp)})
 
 
 def export_model(run, pipe, X_val, val_pred, name_model_artifact):
-
     # Infer the signature of the model
     signature = infer_signature(X_val, val_pred)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-
         export_path = os.path.join(temp_dir, "model_export")
         mlflow.sklearn.save_model(
-            sk_model=pipe, 
+            sk_model=pipe,
             path=export_path,
-            serialization_format="SERIALIZATION_FORMAT_CLOUDPICKLE",
-            signature=signature, 
-            input_example=X_val.iloc[:2])
-        
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
+            signature=signature,
+            input_example=X_val.iloc[:2],
+        )
+
         model_artifact = wandb.Artifact(name=name_model_artifact, type="directory")
         model_artifact.add_dir(export_path)
-        
-        run.log(model_artifact)
+
+        run.log_artifact(model_artifact)
 
         model_artifact.wait()
 
-def get_training_inference_pipeline(args):
 
+def get_training_inference_pipeline(args):
     # Get the configuration for the pipeline
     with open(args.model_config) as fp:
         model_config = yaml.safe_load(fp)
@@ -148,7 +142,9 @@ def get_training_inference_pipeline(args):
     nlp_transformer = make_pipeline(
         SimpleImputer(strategy="constant", fill_value=""),
         reshape_to_1d,
-        TfidfVectorizer(binary=True, max_features=model_config["tfidf"]["max_features"]),
+        TfidfVectorizer(
+            binary=True, max_features=model_config["tfidf"]["max_features"]
+        ),
     )
     # Put the 3 tracks together into one pipeline using the ColumnTransformer
     # This also drops the columns that we are not explicitly transforming
@@ -192,21 +188,15 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
-        "--export_model_artifact",
-        type=bool,
-        help="Whether to export the model",
-        required=True,
-        default=False,
+        "--export_model_artifact", help="flag to signal whether to store the artifact."
     )
     parser.add_argument(
         "--name_model_artifact",
-        type=bool,
+        type=str,
         help="Name of the artifact model",
-        required=True,
-        default=False,
+        required=False,
+        default="exported_model",
     )
 
-
     args = parser.parse_args()
-
     go(args)

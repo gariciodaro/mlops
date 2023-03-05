@@ -3,7 +3,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - pip= 22.3.1
+  - python=3.9
+  - pip=22.3.1
   - pip:
       - wandb==0.13.10
       - omegaconf==2.3.0
@@ -11,4 +12,5 @@ dependencies:
       - scikit-learn==1.2.1
       - matplotlib==3.7.0
       - pillow==9.4.0
+      - mlflow==2.1.1
                    

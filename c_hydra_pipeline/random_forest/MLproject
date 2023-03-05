@@ -10,5 +10,14 @@ entry_points:
       model_config:
         description: JSON blurb containing the configuration for the decision tree
         type: str
+      export_model_artifact:
+        description: Whether to export the model
+        type: bool
+      name_model_artifact:
+        description: Name of the artifact model
+        type: str
     command: >-
-      python run.py --train_data {train_data} --model_config {model_config}
+      python run.py --train_data {train_data} \
+                    --model_config {model_config} \
+                    --export_model_artifact {export_model_artifact} \
+                    --name_model_artifact {name_model_artifact}

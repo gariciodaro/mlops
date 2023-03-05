@@ -88,3 +88,12 @@ dots of the AUC column and select "Sort desc" to sort in descending order. The j
 will be the job with the best performances.
 
 ## Add save model part.
+
++ Store model after run.
+```
+mlflow run . -P hydra_options="
+    random_forest_pipeline.random_forest.max_depth=13 \
+    random_forest_pipeline.tfidf.max_features=10 \
+    mlflow_log_model.name_model_artifact=final_rf_model \
+    mlflow_log_model.export_model_artifact=true"
+```
