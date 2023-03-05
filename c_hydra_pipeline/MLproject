@@ -1,0 +1,21 @@
+name: download_data
+conda_env: conda.yml
+
+entry_points:
+  main:
+    parameters:
+      hydra_options:
+        description: Hydra parameters to override
+        type: str
+        default: ''
+    command: >-
+      python main.py {hydra_options} 
+
+
+Comment: >
+  python main.py {hydra_options} 
+  random_forest_pipeline.random_forest.max_depth=range(1,10,2) 
+  random_forest_pipeline.tfidf.max_features=range(50,200,50) 
+  --multirun
+  That works on windowns, remember to pass from poweshell:
+  mlflow run . -P hydra_options="hydra/launcher=joblib"

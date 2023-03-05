@@ -1,0 +1,5 @@
+*artifacts
+*mlruns
+*wandb
+*multirun
+*outputs

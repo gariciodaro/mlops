@@ -1,0 +1,11 @@
+name: exercise_5
+conda_env: conda.yml
+
+entry_points:
+  main: 
+    parameters:
+      wdb_artifact_location:
+        description: location of raw artifact
+        type: string 
+    command: >-
+      python preprocess_data.py --wdb_artifact_location {wdb_artifact_location}
