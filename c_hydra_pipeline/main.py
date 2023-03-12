@@ -29,8 +29,8 @@ def go(config: DictConfig):
         parameters={
             "train_data": config["data"]["train_data"],
             "model_config": model_config,
-            "export_model_artifact": config["mlflow_log_model"][
-                "export_model_artifact"
+            "export_model_artifact_str": config["mlflow_log_model"][
+                "export_model_artifact_str"
             ],
             "name_model_artifact": config["mlflow_log_model"]["name_model_artifact"],
         },

@@ -60,8 +60,8 @@ def go(args):
     run.summary["AUC"] = score
 
     # Export if required
-    logger.info(f"args.export_model_artifact {args.export_model_artifact}")
-    if args.export_model_artifact is True:
+    logger.info(f"args.export_model_artifact_str {args.export_model_artifact_str}")
+    if eval(args.export_model_artifact_str) is True:
         logger.info(f"Exporting model, name: {args.name_model_artifact}")
         export_model(run, pipe, X_val, pred, args.name_model_artifact)
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
-        "--export_model_artifact", help="flag to signal whether to store the artifact."
+        "--export_model_artifact_str", help="flag to signal whether to store the artifact."
     )
     parser.add_argument(
         "--name_model_artifact",

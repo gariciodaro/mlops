@@ -4,7 +4,7 @@ main:
 data:
   train_data: "homelander/exercise_6/data_train.csv:v0"
 mlflow_log_model:
-  export_model_artifact: false
+  export_model_artifact_str: "False"
   name_model_artifact: "random_forest_dev"
 random_forest_pipeline:
   random_forest:

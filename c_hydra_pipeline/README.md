@@ -95,5 +95,5 @@ mlflow run . -P hydra_options="
     random_forest_pipeline.random_forest.max_depth=13 \
     random_forest_pipeline.tfidf.max_features=10 \
     mlflow_log_model.name_model_artifact=final_rf_model \
-    mlflow_log_model.export_model_artifact=true"
+    mlflow_log_model.export_model_artifact_str=True"
 ```
